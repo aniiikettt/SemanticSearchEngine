@@ -2,6 +2,10 @@
 
 A high-performance distributed semantic similarity engine built for real-world applications. This project demonstrates three distinct search strategies optimized for different use cases and performance characteristics.
 
+## Live Demo
+
+🚀 Experience the high-performance search engine live: **[https://semanticsearchengine.onrender.com](https://semanticsearchengine.onrender.com)**
+
 ## What This Engine Does
 
 ### Three Complementary Search Strategies

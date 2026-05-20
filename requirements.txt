@@ -1,0 +1,2 @@
+# No external python library dependencies are needed.
+# The server is built entirely using Python's standard libraries.

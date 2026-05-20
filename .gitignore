@@ -1,0 +1,45 @@
+# Compiled binaries
+*.exe
+*.out
+*.o
+*.a
+*.so
+*.dylib
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*~
+.DS_Store
+
+# Build directories
+build/
+dist/
+bin/
+obj/
+
+# Debugging
+.gdb_history
+*.dSYM/
+
+# Visual Studio
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# Test outputs
+test_results/
+benchmark_results/
+
+# Python cache & server temp files
+__pycache__/
+temp_docs.txt

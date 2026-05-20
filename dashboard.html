@@ -1,0 +1,1539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semantic Search Engine - Visual Benchmark</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -1000px 0;
+            }
+            100% {
+                background-position: 1000px 0;
+            }
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+            }
+            50% {
+                box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+            }
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #faf8f5;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"><path d="M0,50 Q300,0 600,50 T1200,50 L1200,120 L0,120 Z" fill="rgba(255,255,255,0.1)"/></svg>') repeat-x;
+            background-size: 600px 120px;
+            animation: slideDown 20s linear infinite;
+            opacity: 0.5;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+            animation: slideDown 0.8s ease-out;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1::before {
+            content: '';
+            position: absolute;
+            left: -40px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #4dd0e1, #00bcd4);
+            border-radius: 50%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            animation: slideDown 0.8s ease-out 0.1s both;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            animation-delay: calc(var(--index, 0) * 0.1s);
+            animation-fill-mode: both;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        .stat-box:hover {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-box .label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+        }
+
+        .stat-box .value {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-top: 5px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .stat-box:hover .label {
+            opacity: 1;
+        }
+
+        .content {
+            padding: 40px;
+            background: linear-gradient(135deg, #faf8f5 0%, #f5f3f0 100%);
+            position: relative;
+        }
+
+        .content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            animation: slideUp 0.6s ease-out;
+            position: relative;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: inline-block;
+        }
+
+        .section:hover h2 {
+            color: #764ba2;
+            border-bottom-color: #764ba2;
+            transform: translateX(5px);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            transition: color 0.3s;
+        }
+
+        .input-group:focus-within label {
+            color: #667eea;
+        }
+
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #fdfbf9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .input-group input::placeholder,
+        .input-group textarea::placeholder {
+            color: #bbb;
+            transition: color 0.3s;
+        }
+
+        .input-group input:hover,
+        .input-group textarea:hover,
+        .input-group select:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .input-group input:focus::placeholder,
+        .input-group textarea:focus::placeholder {
+            color: #ddd;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            z-index: 0;
+        }
+
+        button:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 200% 200%;
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .btn-primary:hover {
+            background-position: 100% 0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #faf8f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .btn-secondary:hover {
+            background: #f9f9f9;
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+        }
+
+        button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #fdfbf9 0%, #faf8f5 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            animation-delay: calc(var(--index, 0) * 0.1s);
+            animation-fill-mode: both;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .result-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .result-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            transform: translateY(-8px);
+            background: linear-gradient(135deg, #f5f3f0 0%, #efecea 100%);
+        }
+
+        .result-rank {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .result-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .result-card:hover .result-title {
+            color: #667eea;
+        }
+
+        .result-score {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .result-score label {
+            font-weight: 600;
+            color: #666;
+        }
+
+        .result-score-value {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .result-card:hover .result-score-value {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .benchmark-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow: hidden;
+            border-radius: 8px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .benchmark-table th,
+        .benchmark-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .benchmark-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 1px;
+        }
+
+        .benchmark-table tbody tr {
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .benchmark-table tbody tr:hover {
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.05), transparent);
+            transform: translateX(5px);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-online {
+            background: #4caf50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+
+        .status-offline {
+            background: #f44336;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 20px;
+            animation: slideDown 0.6s ease-out;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: #999;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .tab:hover {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .tab:hover::before {
+            transform: scaleX(1);
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab.active::before {
+            transform: scaleX(0);
+        }
+
+        .tab-content {
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .comparison-chart {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 200% 200%;
+            color: white;
+            padding: 30px 20px;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: slideUp 0.6s ease-out;
+            animation-delay: calc(var(--index, 0) * 0.1s);
+            animation-fill-mode: both;
+        }
+
+        .metric-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .metric-box:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+            background-position: 100% 0;
+        }
+
+        .metric-box .label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: opacity 0.3s;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metric-box .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            position: relative;
+            z-index: 1;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .metric-box:hover .label {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .comparison-chart {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+
+        .footer:hover {
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(102, 126, 234, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #c62828;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #c62828;
+            animation: slideDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .error-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(198, 40, 40, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border-left: 4px solid #2e7d32;
+            animation: slideDown 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-message::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(46, 125, 50, 0.1), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-chart {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+
+            button {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🔍 Semantic Search Engine</h1>
+            <p>Compare three search strategies with interactive benchmarks</p>
+            <div id="engineStatusBadge" style="display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.85em; margin-bottom: 15px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; backdrop-filter: blur(5px);">
+                Checking engine status...
+            </div>
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="label">Active Indexes</div>
+                    <div class="value">3</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Demo Vectors</div>
+                    <div class="value" id="vectorCountLabel">20</div>
+                </div>
+                <div class="stat-box">
+                    <div class="label">Distance Metrics</div>
+                    <div class="value">3</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Tab Navigation -->
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('search')">🎯 Search</button>
+                <button class="tab" onclick="switchTab('benchmark')">⚡ Benchmark</button>
+                <button class="tab" onclick="switchTab('algorithms')">📊 Algorithms</button>
+                <button class="tab" onclick="switchTab('analysis')">📈 Analysis</button>
+            </div>
+
+            <!-- Tab 1: Search -->
+            <div id="search" class="tab-content active">
+                <div class="section">
+                    <h2>Interactive Vector Search</h2>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Enter a query vector and compare results across three different search algorithms
+                    </p>
+
+                    <div class="input-group">
+                        <label>Query Vector (comma-separated floats)</label>
+                        <input type="text" id="queryVector" placeholder="0.9, 0.8, 0.7, 0.6, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Number of Results (k)</label>
+                        <input type="number" id="resultsCount" value="5" min="1" max="20">
+                    </div>
+
+                    <div class="input-group">
+                        <label>Distance Metric</label>
+                        <select id="distanceMetric">
+                            <option value="cosine">Cosine Similarity</option>
+                            <option value="euclidean">Euclidean Distance</option>
+                            <option value="manhattan">Manhattan Distance</option>
+                        </select>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="performSearch()">🔍 Search All Algorithms</button>
+                        <button class="btn-secondary" onclick="clearSearch()">Clear</button>
+                    </div>
+                </div>
+
+                <div class="loading" id="searchLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px;">Searching across algorithms...</p>
+                </div>
+
+                <div id="searchResults" style="margin-top: 30px;"></div>
+
+                <!-- Database Management Section -->
+                <div class="section" style="margin-top: 40px; border-top: 1px solid #e0e0e0; padding-top: 30px;">
+                    <h2>Database Management</h2>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Inspect, insert, or delete documents in the active vector index
+                    </p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                        <!-- Add Document Form -->
+                        <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                            <h4 style="margin-bottom: 15px; color: #667eea;">Add Document</h4>
+                            <div class="input-group">
+                                <label style="font-size: 0.85em; margin-bottom: 4px;">Document ID</label>
+                                <input type="number" id="addDocId" placeholder="e.g. 21">
+                            </div>
+                            <div class="input-group">
+                                <label style="font-size: 0.85em; margin-bottom: 4px;">Title</label>
+                                <input type="text" id="addDocTitle" placeholder="e.g. Quantum Computing Basics">
+                            </div>
+                            <div class="input-group">
+                                <label style="font-size: 0.85em; margin-bottom: 4px;">Embedding Vector (16 floats)</label>
+                                <input type="text" id="addDocEmbedding" placeholder="0.1, 0.2, ...">
+                            </div>
+                            <button class="btn-primary" onclick="addDocument()" style="width: 100%;">Add Document</button>
+                        </div>
+                        
+                        <!-- Delete/Reset Form -->
+                        <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #e0e0e0; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h4 style="margin-bottom: 15px; color: #667eea;">Delete Document</h4>
+                                <div class="input-group">
+                                    <label style="font-size: 0.85em; margin-bottom: 4px;">Document ID</label>
+                                    <input type="number" id="deleteDocId" placeholder="e.g. 10">
+                                </div>
+                                <button class="btn-secondary" onclick="deleteDocument()" style="width: 100%; border-color: #f44336; color: #f44336;">Delete Document</button>
+                            </div>
+                            
+                            <div style="margin-top: 20px; border-top: 1px solid #eee; padding-top: 20px;">
+                                <h4 style="margin-bottom: 10px; color: #667eea;">Reset Database</h4>
+                                <button class="btn-secondary" onclick="resetDatabase()" style="width: 100%;">Reset to Default 20 Docs</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="dbStatusMessage" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Benchmark -->
+            <div id="benchmark" class="tab-content">
+                <div class="section">
+                    <h2>Algorithm Performance Benchmark</h2>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Run comprehensive benchmarks to measure latency, throughput, and accuracy across algorithms
+                    </p>
+
+                    <div class="input-group">
+                        <label>Benchmark Configuration</label>
+                        <select id="benchmarkSize">
+                            <option value="small">Small (100 vectors)</option>
+                            <option value="medium" selected>Medium (1,000 vectors)</option>
+                            <option value="large">Large (5,000 vectors)</option>
+                        </select>
+                    </div>
+
+                    <div class="button-group">
+                        <button class="btn-primary" onclick="runBenchmark()">▶ Run Full Benchmark</button>
+                    </div>
+                </div>
+
+                <div class="loading" id="benchmarkLoading">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px;">Running benchmarks...</p>
+                </div>
+
+                <div id="benchmarkResults" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- Tab 3: Algorithms -->
+            <div id="algorithms" class="tab-content">
+                <div class="section">
+                    <h2>Algorithm Comparison</h2>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Understand the trade-offs between different search strategies
+                    </p>
+
+                    <div class="comparison-chart">
+                        <div class="metric-box">
+                            <div class="label">HierarchicalGraphSearch</div>
+                            <div class="value">O(log N)</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="label">BBSP Tree</div>
+                            <div class="value">O(log N)</div>
+                        </div>
+                        <div class="metric-box">
+                            <div class="label">Linear Search</div>
+                            <div class="value">O(N·D)</div>
+                        </div>
+                    </div>
+
+                    <table class="benchmark-table" style="margin-top: 30px;">
+                        <thead>
+                            <tr>
+                                <th>Algorithm</th>
+                                <th>Time Complexity</th>
+                                <th>Space Complexity</th>
+                                <th>Use Case</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>HierarchicalGraphSearch</strong></td>
+                                <td>O(log N) avg</td>
+                                <td>O(N)</td>
+                                <td>Large-scale, production systems</td>
+                                <td><span class="status-indicator status-online"></span>Recommended</td>
+                            </tr>
+                            <tr>
+                                <td><strong>BBSP Tree</strong></td>
+                                <td>O(log N) avg, O(N) worst</td>
+                                <td>O(N)</td>
+                                <td>Medium-scale with exact results</td>
+                                <td><span class="status-indicator status-online"></span>Stable</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Linear Search</strong></td>
+                                <td>O(N·D)</td>
+                                <td>O(N)</td>
+                                <td>Baseline validation &amp; small datasets</td>
+                                <td><span class="status-indicator status-online"></span>Reference</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 4: Analysis -->
+            <div id="analysis" class="tab-content">
+                <div class="section">
+                    <h2>Performance Analysis &amp; Insights</h2>
+                    <p style="color: #666; margin-bottom: 20px;">
+                        Deep dive into algorithm characteristics and optimization strategies
+                    </p>
+
+                    <div style="background: #f9f9f9; padding: 20px; border-radius: 8px; line-height: 1.8; color: #555;">
+                        <h3 style="color: #667eea; margin-bottom: 15px;">Key Findings</h3>
+                        
+                        <p><strong>✓ Dimension Impact:</strong> BBSP performance degrades above 20D. HGS maintains consistent performance at 768D.</p>
+                        
+                        <p style="margin-top: 10px;"><strong>✓ Scale Trade-offs:</strong> HGS has higher insertion cost but superior query performance at scale.</p>
+                        
+                        <p style="margin-top: 10px;"><strong>✓ Distance Metric Matters:</strong> Cosine distance is fastest; Euclidean provides good trade-off; Manhattan best for sparse vectors.</p>
+                        
+                        <p style="margin-top: 10px;"><strong>✓ Practical Optimization:</strong> Use HGS for production, BBSP for validation, Linear for benchmarking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Semantic Search Engine v1.0 | Educational Project | MIT License</p>
+        </div>
+    </div>
+
+    <script>
+        let activeDimension = 16;
+
+        // Fetch stats on load
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/stats');
+                if (response.ok) {
+                    const stats = await response.json();
+                    document.getElementById('vectorCountLabel').innerText = stats.vector_count;
+                    activeDimension = stats.dimensions;
+                    
+                    const badge = document.getElementById('engineStatusBadge');
+                    if (stats.has_cpp_engine) {
+                        badge.innerHTML = `⚙️ Engine: <strong style="color: #4caf50;">C++ HIGH-PERFORMANCE</strong>`;
+                        badge.style.borderColor = 'rgba(76, 175, 80, 0.4)';
+                    } else {
+                        badge.innerHTML = `⚠️ Engine: <strong style="color: #ff9800;">PYTHON FALLBACK</strong> (g++ compiler missing)`;
+                        badge.style.borderColor = 'rgba(255, 152, 0, 0.4)';
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to connect to backend api:", err);
+                const badge = document.getElementById('engineStatusBadge');
+                badge.innerHTML = `❌ <strong style="color: #f44336;">OFFLINE</strong> (Backend server not running)`;
+                badge.style.borderColor = 'rgba(244, 67, 54, 0.4)';
+            }
+        }
+
+        // Enhanced tab switching with animations
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const selectedTab = document.getElementById(tabName);
+            selectedTab.classList.add('active');
+            
+            event.target.classList.add('active');
+            
+            setTimeout(() => {
+                const elements = selectedTab.querySelectorAll('.section, .input-group, button');
+                elements.forEach((el, index) => {
+                    el.style.animation = `slideUp 0.6s ease-out ${index * 0.05}s both`;
+                });
+            }, 100);
+        }
+
+        async function performSearch() {
+            const queryVectorStr = document.getElementById('queryVector').value.trim();
+            const resultsCountStr = document.getElementById('resultsCount').value.trim();
+            const metric = document.getElementById('distanceMetric').value;
+            const container = document.getElementById('searchResults');
+            
+            container.innerHTML = '';
+
+            // Validation
+            if (!queryVectorStr) {
+                showError('Query vector is empty. Please enter a comma-separated list of floats.');
+                return;
+            }
+            if (!resultsCountStr) {
+                showError('Number of results (k) is empty. Please specify a value.');
+                return;
+            }
+
+            const numPattern = /^[0-9eE\s,.-]+$/;
+            if (!numPattern.test(queryVectorStr)) {
+                showError('Query vector contains invalid characters. Use only numbers, commas, periods, minus signs, spaces, or scientific notation.');
+                return;
+            }
+
+            const queryVector = [];
+            const tokens = queryVectorStr.split(',');
+            for (let i = 0; i < tokens.length; i++) {
+                const tok = tokens[i].trim();
+                if (tok === '') continue;
+                const num = parseFloat(tok);
+                if (isNaN(num) || !isFinite(num)) {
+                    showError(`Element "${tok}" at index ${i} is not a valid float (NaN or Infinity).`);
+                    return;
+                }
+                queryVector.push(num);
+            }
+
+            if (queryVector.length === 0) {
+                showError('Query vector must contain at least one number.');
+                return;
+            }
+            if (queryVector.length !== activeDimension) {
+                showError(`Dimension mismatch: The active index expects a <strong>${activeDimension}-dimensional</strong> vector, but your input contains <strong>${queryVector.length}</strong> values.`);
+                return;
+            }
+
+            const k = parseFloat(resultsCountStr);
+            if (isNaN(k) || !Number.isInteger(k)) {
+                showError('Number of results (k) must be an integer.');
+                return;
+            }
+            if (k <= 0) {
+                showError('Number of results (k) must be a positive integer greater than zero.');
+                return;
+            }
+
+            const vectorCount = parseInt(document.getElementById('vectorCountLabel').innerText);
+            if (k > vectorCount) {
+                showError(`Target limit k (${k}) cannot exceed the current dataset size (${vectorCount} documents).`);
+                return;
+            }
+
+            document.getElementById('searchLoading').classList.add('active');
+            
+            try {
+                const response = await fetch('/api/search', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        query_vector: queryVector,
+                        k: k,
+                        metric: metric
+                    })
+                });
+                
+                const data = await response.json();
+                document.getElementById('searchLoading').classList.remove('active');
+                
+                if (response.ok) {
+                    showResults(data.search_data, data.engine);
+                } else {
+                    showError(data.error || 'An error occurred during search.');
+                }
+            } catch (err) {
+                document.getElementById('searchLoading').classList.remove('active');
+                showError('Failed to connect to backend: ' + err.message);
+            }
+        }
+
+        async function runBenchmark() {
+            const size = document.getElementById('benchmarkSize').value;
+            const metric = document.getElementById('distanceMetric').value;
+            
+            document.getElementById('benchmarkLoading').classList.add('active');
+            document.getElementById('benchmarkResults').innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/benchmark', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ size: size, metric: metric })
+                });
+                
+                const data = await response.json();
+                document.getElementById('benchmarkLoading').classList.remove('active');
+                
+                if (response.ok) {
+                    showBenchmarkResults(data);
+                } else {
+                    showErrorBanner('benchmarkResults', data.error || 'Failed to run benchmark');
+                }
+            } catch (err) {
+                document.getElementById('benchmarkLoading').classList.remove('active');
+                showErrorBanner('benchmarkResults', 'Connection error: ' + err.message);
+            }
+        }
+
+        async function addDocument() {
+            const id = document.getElementById('addDocId').value.trim();
+            const title = document.getElementById('addDocTitle').value.trim();
+            const embedding = document.getElementById('addDocEmbedding').value.trim();
+            
+            if (!id || !title || !embedding) {
+                showDbMessage('Please fill all fields to add a document', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/add_document', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: parseInt(id), title, embedding })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showDbMessage(data.message, 'success');
+                    fetchStats();
+                    document.getElementById('addDocId').value = '';
+                    document.getElementById('addDocTitle').value = '';
+                    document.getElementById('addDocEmbedding').value = '';
+                } else {
+                    showDbMessage(data.error || 'Failed to add document', 'error');
+                }
+            } catch (err) {
+                showDbMessage('Connection error: ' + err.message, 'error');
+            }
+        }
+
+        async function deleteDocument() {
+            const id = document.getElementById('deleteDocId').value.trim();
+            
+            if (!id) {
+                showDbMessage('Please specify a Document ID to delete', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/delete_document', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: parseInt(id) })
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    showDbMessage(data.message, 'success');
+                    fetchStats();
+                    document.getElementById('deleteDocId').value = '';
+                } else {
+                    showDbMessage(data.error || 'Failed to delete document', 'error');
+                }
+            } catch (err) {
+                showDbMessage('Connection error: ' + err.message, 'error');
+            }
+        }
+
+        async function resetDatabase() {
+            try {
+                const response = await fetch('/api/reset_dataset', { method: 'POST' });
+                const data = await response.json();
+                if (response.ok) {
+                    showDbMessage(data.message, 'success');
+                    fetchStats();
+                } else {
+                    showDbMessage(data.error || 'Failed to reset database', 'error');
+                }
+            } catch (err) {
+                showDbMessage('Connection error: ' + err.message, 'error');
+            }
+        }
+
+        function showDbMessage(message, type) {
+            const container = document.getElementById('dbStatusMessage');
+            if (type === 'success') {
+                container.innerHTML = `<div class="success-message">${message}</div>`;
+            } else {
+                container.innerHTML = `<div class="error-message">${message}</div>`;
+            }
+            setTimeout(() => { container.innerHTML = ''; }, 6000);
+        }
+
+        function clearSearch() {
+            document.getElementById('queryVector').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+
+        function showError(message) {
+            const container = document.getElementById('searchResults');
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        function showErrorBanner(elementId, message) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = `<div class="error-message">${message}</div>`;
+        }
+
+        function showResults(data, engineType) {
+            const container = document.getElementById('searchResults');
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: #667eea; margin: 0;">Search Results Comparison</h3>
+                    <span style="background: #e8f5e9; color: #2e7d32; padding: 6px 14px; border-radius: 20px; font-size: 0.85em; font-weight: 600; border: 1px solid #c8e6c9;">
+                        ⚡ Executed on: ${engineType} Engine
+                    </span>
+                </div>
+            `;
+            html += '<div class="results-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">';
+            
+            const algos = [
+                { key: 'hgs', name: 'HierarchicalGraphSearch (ANN)', color: '#4caf50' },
+                { key: 'bbsp', name: 'BBSP Tree (Exact)', color: '#ff9800' },
+                { key: 'linear', name: 'Linear Search (Exact)', color: '#2196f3' }
+            ];
+            
+            algos.forEach(algo => {
+                const algoData = data[algo.key];
+                html += `
+                    <div style="background: white; border: 2px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+                        <h4 style="color: ${algo.color}; border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <span>${algo.name}</span>
+                            <span style="font-size: 0.85em; font-weight: bold; background: #f5f5f5; padding: 2px 8px; border-radius: 4px; color: #555;">${algoData.query_time_ms.toFixed(3)} ms</span>
+                        </h4>
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 10px;">
+                `;
+                
+                if (!algoData.results || algoData.results.length === 0) {
+                    html += `<p style="color: #888; text-align: center; padding: 20px; flex-grow: 1;">No results returned</p>`;
+                } else {
+                    algoData.results.forEach((res, index) => {
+                        html += `
+                            <div style="padding: 12px; border: 1px solid #f0f0f0; border-radius: 6px; background: #fafafa; display: flex; flex-direction: column; gap: 4px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <strong style="color: #333; font-size: 0.9em;">#${index + 1} - ${res.title}</strong>
+                                    <span style="color: #999; font-size: 0.75em;">ID: ${res.id}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                    <span style="color: #777; font-size: 0.8em;">Metric distance:</span>
+                                    <span style="font-family: monospace; background: #efebe9; padding: 2px 6px; border-radius: 4px; font-size: 0.8em; font-weight: bold; color: #5d4037;">
+                                        ${res.distance.toFixed(6)}
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function showBenchmarkResults(data) {
+            const container = document.getElementById('benchmarkResults');
+            const metrics = data.metrics;
+            
+            let html = `
+                <div class="success-message" style="margin-bottom: 25px;">
+                    ✓ Benchmark successfully completed using <strong>${data.engine}</strong>. Test size: <strong>${data.vector_count}</strong> vectors (${data.dimensions}D).
+                </div>
+                
+                <h3 style="margin-bottom: 15px; color: #667eea;">Performance Metrics Comparison</h3>
+                <table class="benchmark-table" style="margin-bottom: 30px; width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Build/Index Time</th>
+                            <th>Avg Query Latency</th>
+                            <th>Throughput</th>
+                            <th>Recall Accuracy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>HierarchicalGraphSearch (ANN)</strong></td>
+                            <td>${metrics.hgs.build_time_ms.toFixed(2)} ms</td>
+                            <td>${metrics.hgs.query_time_ms.toFixed(4)} ms</td>
+                            <td>${metrics.hgs.qps.toLocaleString()} QPS</td>
+                            <td>${metrics.hgs.recall.toFixed(1)}%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BBSP Tree (Exact)</strong></td>
+                            <td>${metrics.bbsp.build_time_ms.toFixed(2)} ms</td>
+                            <td>${metrics.bbsp.query_time_ms.toFixed(4)} ms</td>
+                            <td>${metrics.bbsp.qps.toLocaleString()} QPS</td>
+                            <td>${metrics.bbsp.recall.toFixed(1)}%</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Linear Search (Baseline)</strong></td>
+                            <td>${metrics.linear.build_time_ms.toFixed(2)} ms</td>
+                            <td>${metrics.linear.query_time_ms.toFixed(4)} ms</td>
+                            <td>${metrics.linear.qps.toLocaleString()} QPS</td>
+                            <td>100.0% (Ground Truth)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            
+            const maxLatency = Math.max(metrics.hgs.query_time_ms, metrics.bbsp.query_time_ms, metrics.linear.query_time_ms) || 1.0;
+            const hgsLatPct = (metrics.hgs.query_time_ms / maxLatency) * 100;
+            const bbspLatPct = (metrics.bbsp.query_time_ms / maxLatency) * 100;
+            const linearLatPct = (metrics.linear.query_time_ms / maxLatency) * 100;
+            
+            const maxQps = Math.max(metrics.hgs.qps, metrics.bbsp.qps, metrics.linear.qps) || 1.0;
+            const hgsQpsPct = (metrics.hgs.qps / maxQps) * 100;
+            const bbspQpsPct = (metrics.bbsp.qps / maxQps) * 100;
+            const linearQpsPct = (metrics.linear.qps / maxQps) * 100;
+
+            html += `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 30px;">
+                    <!-- Latency Chart -->
+                    <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                        <h4 style="margin-bottom: 15px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Query Latency (Lower is Better)</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                                <span>HGS</span>
+                                <strong>${metrics.hgs.query_time_ms.toFixed(4)} ms</strong>
+                            </div>
+                            <div style="height: 12px; background: #eee; border-radius: 6px; overflow: hidden;">
+                                <div style="height: 100%; width: ${hgsLatPct}%; background: linear-gradient(90deg, #81c784, #4caf50); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                                <span>BBSP Tree</span>
+                                <strong>${metrics.bbsp.query_time_ms.toFixed(4)} ms</strong>
+                            </div>
+                            <div style="height: 12px; background: #eee; border-radius: 6px; overflow: hidden;">
+                                <div style="height: 100%; width: ${bbspLatPct}%; background: linear-gradient(90deg, #ffb74d, #ff9800); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                                <span>Linear Search</span>
+                                <strong>${metrics.linear.query_time_ms.toFixed(4)} ms</strong>
+                            </div>
+                            <div style="height: 12px; background: #eee; border-radius: 6px; overflow: hidden;">
+                                <div style="height: 100%; width: ${linearLatPct}%; background: linear-gradient(90deg, #e57373, #f44336); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Throughput Chart (QPS) -->
+                    <div style="background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                        <h4 style="margin-bottom: 15px; color: #333; border-bottom: 1px solid #eee; padding-bottom: 10px;">Throughput (Higher is Better)</h4>
+                        
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                                <span>HGS</span>
+                                <strong>${metrics.hgs.qps.toLocaleString()} QPS</strong>
+                            </div>
+                            <div style="height: 12px; background: #eee; border-radius: 6px; overflow: hidden;">
+                                <div style="height: 100%; width: ${hgsQpsPct}%; background: linear-gradient(90deg, #81c784, #4caf50); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                                <span>BBSP Tree</span>
+                                <strong>${metrics.bbsp.qps.toLocaleString()} QPS</strong>
+                            </div>
+                            <div style="height: 12px; background: #eee; border-radius: 6px; overflow: hidden;">
+                                <div style="height: 100%; width: ${bbspQpsPct}%; background: linear-gradient(90deg, #ffb74d, #ff9800); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 0.9em; margin-bottom: 5px;">
+                                <span>Linear Search</span>
+                                <strong>${metrics.linear.qps.toLocaleString()} QPS</strong>
+                            </div>
+                            <div style="height: 12px; background: #eee; border-radius: 6px; overflow: hidden;">
+                                <div style="height: 100%; width: ${linearQpsPct}%; background: linear-gradient(90deg, #e57373, #f44336); border-radius: 6px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // On window load
+        window.addEventListener('load', () => {
+            fetchStats();
+            
+            const statBoxes = document.querySelectorAll('.stat-box');
+            statBoxes.forEach((box, index) => {
+                box.style.setProperty('--index', index);
+            });
+
+            const metricBoxes = document.querySelectorAll('.metric-box');
+            metricBoxes.forEach((box, index) => {
+                box.style.setProperty('--index', index);
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Table animations
+        document.querySelectorAll('.benchmark-table tbody tr').forEach((row, index) => {
+            row.style.animation = `slideUp 0.6s ease-out ${index * 0.05 + 0.2}s both`;
+        });
+    </script>
+</body>
+</html>

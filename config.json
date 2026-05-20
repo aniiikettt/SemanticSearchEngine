@@ -1,0 +1,85 @@
+{
+  "project_name": "Semantic Search Engine",
+  "version": "1.0.0",
+  "author": "Your Name",
+  "description": "High-performance semantic search engine with three complementary search algorithms",
+  
+  "algorithms": {
+    "hierarchical_graph_search": {
+      "name": "HierarchicalGraphSearch",
+      "complexity": "O(log N)",
+      "best_for": "Large-scale production systems",
+      "parameters": {
+        "max_connections": 16,
+        "construction_iterations": 200,
+        "layer_probability": 0.5
+      }
+    },
+    "bbsp_tree": {
+      "name": "Balanced Binary Space Partitioning",
+      "complexity": "O(log N) average, O(N) worst",
+      "best_for": "Medium-scale with exact results",
+      "parameters": {
+        "dimension_count": 16,
+        "pruning_threshold": 0.01
+      }
+    },
+    "linear_search": {
+      "name": "Linear Exhaustive Search",
+      "complexity": "O(N*D)",
+      "best_for": "Baseline validation and small datasets",
+      "parameters": {
+        "full_scan": true
+      }
+    }
+  },
+
+  "distance_metrics": [
+    {
+      "name": "Cosine Similarity",
+      "best_for": "Text embeddings and semantic search",
+      "range": [0, 1]
+    },
+    {
+      "name": "Euclidean Distance",
+      "best_for": "Geometric and spatial data",
+      "range": [0, infinity]
+    },
+    {
+      "name": "Manhattan Distance",
+      "best_for": "Grid-based and categorical data",
+      "range": [0, infinity]
+    }
+  ],
+
+  "performance_benchmarks": {
+    "small_dataset": {
+      "vector_count": 1000,
+      "vector_dimension": 16,
+      "expected_hgs_time_ms": 15,
+      "expected_bbsp_time_ms": 20,
+      "expected_linear_time_ms": 150
+    },
+    "medium_dataset": {
+      "vector_count": 100000,
+      "vector_dimension": 16,
+      "expected_hgs_time_ms": 25,
+      "expected_bbsp_time_ms": 50,
+      "expected_linear_time_ms": 5000
+    },
+    "large_dataset": {
+      "vector_count": 1000000,
+      "vector_dimension": 768,
+      "expected_hgs_time_ms": 40,
+      "expected_bbsp_time_ms": 500,
+      "expected_linear_time_ms": 50000
+    }
+  },
+
+  "compile_options": {
+    "standard": "c++17",
+    "optimization": "-O2",
+    "debug": false,
+    "warnings": "-Wall -Wextra"
+  }
+}

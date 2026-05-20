@@ -10,7 +10,7 @@ import urllib.parse
 import sys
 import heapq
 
-PORT = 8080
+PORT = int(os.environ.get("PORT", 8080))
 EXE_NAME = "./engine.exe" if os.name == 'nt' else "./engine"
 TEMP_DOCS_FILE = "temp_docs.txt"
 
